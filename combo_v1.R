@@ -10,12 +10,18 @@ library(lme4) #for mixed linear and generalized linear models
 library(devtools)
 
 #set wd#
-setwd("~/Documents/r_stuff/SYR_RCode")
+setwd("~/Documents/r_stuff/SYR_RCode") #skye's mac
+setwd("~/SYR/SYR_rcode/SYR2021") #skye's pc
 
-#read csv
+#read csv#
+#mac
 r1bm <- read.csv("/Users/saus/Documents/SYR/data/r1_biomass.csv")
 r2bm <- read.csv("/Users/saus/Documents/SYR/data/r2_biomass.csv")
 r3bm <- read.csv("/Users/saus/Documents/SYR/data/r3_biomass.csv")
+#PC
+r1bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r1_biomass.csv")
+r2bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r2_biomass.csv")
+r3bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r3_biomass.csv")
 
 #make CO2 column
 r1bm1 <- r1bm %>% 
@@ -26,11 +32,11 @@ r3bm1 <- r3bm %>%
   mutate(co2=substring(pot_id, 11, 13))
 #nitrogen column 
 r1bm2 <- r1bm1 %>% 
-  mutate(nitrogen=substring(pot_id, 15))
+  mutate(nutrient=substring(pot_id, 15))
 r2bm2 <- r2bm1 %>% 
-  mutate(nitrogen=substring(pot_id, 15))
+  mutate(nutrient=substring(pot_id, 15))
 r3bm2 <- r3bm1 %>% 
-  mutate(nitrogen=substring(pot_id, 15))
+  mutate(nutrient=substring(pot_id, 15))
 #n/nn column
 r1bm3 <- r1bm2 %>% 
   mutate(n_nn=if_else(r1bm2$spp_id %in% c("Chenopodium album"), "non-native", "native" ))
@@ -38,14 +44,10 @@ r2bm3 <- r2bm2 %>%
   mutate(n_nn=if_else(r2bm2$spp_id %in% c("Plantago rugelii"), "native", "non-native" ))
 r3bm3 <- r3bm2 %>% 
   mutate(n_nn=if_else(r3bm2$spp_id %in% c("Digitaria ischaemum", "Plantago major", "Potentilla indica"), "non-native", "native" ))
+
 #combine all 3 data frames#
-#fix columns
-r1bm3.1 <- r1bm3 %>% 
-  mutate(leaf_f_mg = "NA")
-r1bm3.2 <- r1bm3.1 %>% 
-  rename(leaf_d_mg = leafmass_d_mg)
-#combined
-bm1 <- rbind(r1bm3.2, r2bm3) #add three when you have more data
+bm1 <- bind_rows(r1bm3, r2bm3, r3bm3)
+
 
 ###fix p. indica co2 code and treatment code 
 #make columns numeric
@@ -83,10 +85,16 @@ lmdc_pi <- 0.3405158
 #bring in extras sheets
 r1e <- read.csv("/Users/saus/Documents/SYR/data/rnd1_fwdw_extras.csv")
 r2e <- read.csv("/Users/saus/Documents/SYR/data/r2_extras.csv")
+r3e <- read.csv()
+#PC
+r1e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\rnd1_fwdw_extras.csv")
+r2e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r2_extras.csv")
+r3e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r3_extras.csv")
 #edit sheet
 r2e1 <- select(r2e, -c("abv_f_g", "blw_f_g", "abv_d_g", "blw_d_g"))
+r3e1 <- select(r3e, -c("abv_f_g", "blw_f_g", "abv_d_g", "blw_d_g"))
 #combine sheets
-e1 <- rbind(r1e, r2e1)
+e1 <- rbind(r1e, r2e1, r3e1)
 #get the average of each data point#
 e2 <- e1 %>% 
   mutate(avg_g = dry_wt_g/fresh_wt_g)
@@ -103,14 +111,25 @@ e_pr <- e2 %>%
   subset(e2$spp_id == "Plantago rugelii")
 e_ds <- e2 %>% 
   subset(e2$spp_id == "Digitaria sanguinalis")
+e_di <- e2 %>% 
+  subset(e2$spp_id == "Digitaria ischaemum")
+e_pm <- e2 %>% 
+  subset(e2$spp_id == "Plantago major")
+e_pin <- e2 %>% 
+  subset(e2$spp_id == "Potentilla indica")
+
+
 #take the mean of the averages
-summary(e_os$avg_g) #do for the rest of them
+summary(e_pin$avg_g) #do for the rest of them
 moa_os <- 0.1594
 moa_ca <- 0.13281
 moa_aa <- 0.1987
 moa_pi <- 0.3692
 moa_pr <- 0.2232
 moa_ds <- 0.2491
+moa_di <- 0.08759
+moa_pm <- 0.1843
+moa_pin <- 0.3360
 #seperate big df into species
 bm_os <- bm7 %>% 
   subset(bm7$spp_id == "Oxalis stricta")
@@ -124,6 +143,13 @@ bm_pr <- bm7 %>%
   subset(bm7$spp_id == "Plantago rugelii")
 bm_ds <- bm7 %>% 
   subset(bm7$spp_id == "Digitaria sanguinalis")
+bm_di <- bm7 %>% 
+  subset(bm7$spp_id == "Digitaria ischaemum")
+bm_pm <- bm7 %>% 
+  subset(bm7$spp_id == "Plantago major")
+bm_pin <- bm7 %>% 
+  subset(bm7$spp_id == "Potentilla indica")
+
 #get initial dry weight (m1)#
 bmaa1 <- bm_aa %>% 
   mutate(dry_wt_1 = fresh_wt_g_1*moa_aa)
@@ -137,6 +163,12 @@ bmpr1 <- bm_pr %>%
   mutate(dry_wt_1 = fresh_wt_g_1*moa_pr)
 bmds1 <- bm_ds %>% 
   mutate(dry_wt_1 = fresh_wt_g_1*moa_ds)
+bmdi1 <- bm_di %>% 
+  mutate(dry_wt_1 = fresh_wt_g_1*moa_di)
+bmpm1 <- bm_pm %>% 
+  mutate(dry_wt_1 = fresh_wt_g_1*moa_pm)
+bmpin1 <- bm_pin %>% 
+  mutate(dry_wt_1 = fresh_wt_g_1*moa_pin)
 #rgr
 aa_rgr <- bmaa1 %>% 
   mutate(rgr = (log(total_d_g)-log(dry_wt_1))/15)
@@ -150,8 +182,22 @@ pr_rgr <- bmpr1 %>%
   mutate(rgr = (log(total_d_g)-log(dry_wt_1))/15)
 ds_rgr <- bmds1 %>% 
   mutate(rgr = (log(total_d_g)-log(dry_wt_1))/15)
+di_rgr <- bmdi1 %>% 
+  mutate(rgr = (log(total_d_g)-log(dry_wt_1))/15)
+pm_rgr <- bmpm1 %>% 
+  mutate(rgr = (log(total_d_g)-log(dry_wt_1))/15)
+pin_rgr <- bmpin1 %>% 
+  mutate(rgr = (log(total_d_g)-log(dry_wt_1))/15)
+
+#fix pin columns
+pin_fix <- select(pin_rgr, -c("co2", "nutrient"))
+pin1 <- pin_fix %>% 
+  mutate(nutrient=substring(pot_id, 16))
+pin2 <- pin1 %>% 
+  mutate(co2=substring(pot_id, 12, 14))
+
 #combine back together
-bm8 <- rbind(aa_rgr, ca_rgr, os_rgr, pi_rgr, pr_rgr, ds_rgr)
+bm8 <- rbind(aa_rgr, ca_rgr, os_rgr, pi_rgr, pr_rgr, ds_rgr, di_rgr, pm_rgr, pin2)
 
 ##test for normality
 ggqqplot(bm8$root_shoot_f) #not normal
@@ -176,7 +222,7 @@ bm8.5 <- bm8.3 %>%
 #rgr by species, fill nitrogen
 pdf("RGR_by_spp1", width = 10, height = 10)
 bm8.3 %>%
-  ggplot(aes(x=spp_id, y=rgr, fill=nitrogen)) +
+  ggplot(aes(x=spp_id, y=rgr, fill=nutrient)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
   theme(
