@@ -30,7 +30,7 @@ r2bm1 <- r2bm %>%
   mutate(co2=substring(pot_id, 11, 13))
 r3bm1 <- r3bm %>% 
   mutate(co2=substring(pot_id, 11, 13))
-#nitrogen column 
+#nutrient column 
 r1bm2 <- r1bm1 %>% 
   mutate(nutrient=substring(pot_id, 15))
 r2bm2 <- r2bm1 %>% 
@@ -85,7 +85,7 @@ lmdc_pi <- 0.3405158
 #bring in extras sheets
 r1e <- read.csv("/Users/saus/Documents/SYR/data/rnd1_fwdw_extras.csv")
 r2e <- read.csv("/Users/saus/Documents/SYR/data/r2_extras.csv")
-r3e <- read.csv()
+r3e <- read.csv("/Users/saus/Documents/SYR/data/r3_extras.csv")
 #PC
 r1e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\rnd1_fwdw_extras.csv")
 r2e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r2_extras.csv")
@@ -219,7 +219,7 @@ bm8.5 <- bm8.3 %>%
 #use 8.3 for now, change later
 #plot(x = , y = ) #experiment
 
-#rgr by species, fill nitrogen
+#rgr by species, fill nutrient
 pdf("RGR_by_spp1", width = 10, height = 10)
 bm8.3 %>%
   ggplot(aes(x=spp_id, y=rgr, fill=nutrient)) +
@@ -244,10 +244,10 @@ bm8.3 %>%
   xlab("Species")+
   ylab("RGR")
 
-#rmf, fill nitrogen
+#rmf, fill nutrient
 pdf("RMF_by_spp2", width = 10, height = 10)
 bm8.3 %>%
-  ggplot(aes(x=spp_id, y=rmf, fill=nitrogen)) +
+  ggplot(aes(x=spp_id, y=rmf, fill=nutrient)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
   theme(
@@ -270,9 +270,9 @@ bm8.3 %>%
   ylab("RMF")
 
 
-#ldmc, fill nitrogen
+#ldmc, fill nutrient
 bm8.3 %>%
-  ggplot(aes(x=spp_id, y=ldmc, fill=nitrogen)) +
+  ggplot(aes(x=spp_id, y=ldmc, fill=nutrient)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
   theme(
@@ -294,12 +294,55 @@ bm8.3 %>%
   xlab("Species")+
   ylab("LDMC")
 
+#add fw2/fw1 column
+bm8.3$fw1_fw2 <- bm8.3$fresh_wt_g_2/bm8.3$fresh_wt_g_1
+
+#fw2/fw1 fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=fw1_fw2, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("fw2/fw1 Content by Species") +
+  xlab("Species")+
+  ylab("fw2/fw1")
+
+#fw2/fw1 fill co2
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=fw1_fw2, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("fw2/fw1 by Species") +
+  xlab("Species")+
+  ylab("fw2/fw1")
+
+
+
 #prelim, look at rgr and rmf
-rgraov <- aov(data = bm8.3, rgr~co2*nitrogen*n_nn*spp_id)
-rmfaov <- aov(data = bm8.3, rmf~co2*nitrogen*n_nn*spp_id)
+rgraov <- aov(data = bm8.3, rgr~co2*nutrient*n_nn*spp_id)
+rmfaov <- aov(data = bm8.3, rmf~co2*nutrient*n_nn*spp_id)
 summary.aov(rgraov)
 #n*spp, spp, n/nn, and n are sig
 summary.aov(rmfaov)
 #co2*n, spp, n/nn are sig, n and co2*spp are trending
+
+boxplot(data = bm8.3, rgr~nutrient*spp_id)
+
+rgraov1 <- aov(data = bm8.3, rgr~co2*nutrient*n_nn)
+rmfaov1 <- aov(data = bm8.3, rmf~co2*nutrient*n_nn)
+
+lmer1 <- lmer(data = bm8.3, rgr~co2*nutrient*n_nn + (1|spp_id))
+
+lmer2 <- lmer(data = bm8.3, rgr~co2*nutrient-1 + (1|spp_id))
+anova(lmer2)
+
+lmer1a <- lmer(data = bm8.3, rgr~co2*nutrient*n_nn + (1|spp_id), subset = bm8$rgr>0)
+lmer1b <- lmer(data = bm8.3, lmf~co2*nutrient*n_nn + (1|spp_id), subset = bm8$rgr>0)
+lmer1c <- lmer(data = bm8.3, rgr~co2*nutrient + (1|spp_id), subset = bm8.3$rgr>0)
 
 
