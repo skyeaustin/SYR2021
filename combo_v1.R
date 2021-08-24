@@ -218,131 +218,315 @@ bm8.5 <- bm8.3 %>%
   mutate(tukey_rgr = transformTukey(bm8.3$rgr))#still not fixed
 #use 8.3 for now, change later
 #plot(x = , y = ) #experiment
-
-#rgr by species, fill nutrient
-pdf("RGR_by_spp1", width = 10, height = 10)
-bm8.3 %>%
-  ggplot(aes(x=spp_id, y=rgr, fill=nutrient)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
-  theme(
-    plot.title = element_text(size=11)
-  ) +
-  ggtitle("Relative Growth Rate by Species") +
-  xlab("Species")+
-  ylab("RGR")
-dev.off()
-#rgr by species, fill co2
-bm8.3 %>%
-  ggplot(aes(x=spp_id, y=rgr, fill=co2)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
-  theme(
-    plot.title = element_text(size=11)
-  ) +
-  ggtitle("Relative Growth Rate by Species") +
-  xlab("Species")+
-  ylab("RGR")
-
-#rmf, fill nutrient
-pdf("RMF_by_spp2", width = 10, height = 10)
-bm8.3 %>%
-  ggplot(aes(x=spp_id, y=rmf, fill=nutrient)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
-  theme(
-    plot.title = element_text(size=11)
-  ) +
-  ggtitle("Root Mass Fraction by Species") +
-  xlab("Species")+
-  ylab("RMF")
-dev.off()
-#rmf, fill co2
-bm8.3 %>%
-  ggplot(aes(x=spp_id, y=rmf, fill=co2)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
-  theme(
-    plot.title = element_text(size=11)
-  ) +
-  ggtitle("Root Mass Fraction by Species") +
-  xlab("Species")+
-  ylab("RMF")
-
-
-#ldmc, fill nutrient
-bm8.3 %>%
-  ggplot(aes(x=spp_id, y=ldmc, fill=nutrient)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
-  theme(
-    plot.title = element_text(size=11)
-  ) +
-  ggtitle("Leaf Dry Matter Content by Species") +
-  xlab("Species")+
-  ylab("LDMC")
-
-#ldmc, fill co2
-bm8.3 %>%
-  ggplot(aes(x=spp_id, y=ldmc, fill=co2)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
-  theme(
-    plot.title = element_text(size=11)
-  ) +
-  ggtitle("Leaf Dry Matter Content by Species") +
-  xlab("Species")+
-  ylab("LDMC")
-
 #add fw2/fw1 column
 bm8.3$fw1_fw2 <- bm8.3$fresh_wt_g_2/bm8.3$fresh_wt_g_1
 
-#fw2/fw1 fill nutrient
+###QUESTIONS/HYPOTHESES###
+##plant response to nutrient/co2##
+rgraov3 <- aov(data = bm8.3, rgr~co2*nutrient)
+rgraov5 <- aov(data = bm8.3, rgr~co2*nutrient*spp_id)
+#
+ldmcaov1 <- aov(data = bm8.3, ldmc~co2*nutrient)
+ldmcaov3 <- aov(data = bm8.3, ldmc~co2*nutrient*spp_id)
+#
+#sla goes here
+
+lmer1 <- lmer(data = bm8.3, rgr~co2*nutrient-1 + (1|spp_id), subset = bm8.3$rgr>0)
+#
+lmer5 <- lmer(data = bm8.3, ldmc~co2*nutrient-1 + (1|spp_id))
+#
+#sla goes here
+
+boxplot(data = bm8.3, rgr~co2)
+boxplot(data = bm8.3, rgr~nutrient)
+boxplot(data = bm8.3, rgr~nutrient*co2)
+#
+boxplot(data = bm8.3, ldmc~co2)
+boxplot(data = bm8.3, ldmc~nutrient)
+boxplot(data = bm8.3, ldmc~nutrient*co2)
+#
+#sla goes here
+
+#RGR co2, fill nutrient
 bm8.3 %>%
-  ggplot(aes(x=spp_id, y=fw1_fw2, fill=nutrient)) +
+  ggplot(aes(x=co2, y=rgr, fill=nutrient)) +
   geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
   geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
   theme(
     plot.title = element_text(size=11)
   ) +
-  ggtitle("fw2/fw1 Content by Species") +
-  xlab("Species")+
-  ylab("fw2/fw1")
+  ggtitle("Relative Growth Rate by CO2 Level") +
+  xlab("CO2 (ppm)")+
+  ylab("RGR (g/g-1 d-1)")
 
-#fw2/fw1 fill co2
+#RGR nutrient, fill co2
 bm8.3 %>%
-  ggplot(aes(x=spp_id, y=fw1_fw2, fill=co2)) +
+  ggplot(aes(x=nutrient, y=rgr, fill=co2)) +
   geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
   geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
   theme(
     plot.title = element_text(size=11)
   ) +
-  ggtitle("fw2/fw1 by Species") +
+  ggtitle("Relative Growth Rate by Nutrient Treatment") +
+  xlab("Nutrient Treatment")+
+  ylab("RGR (g/g-1 d-1)")
+
+#RGR by species, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=rgr, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Relative Growth Rate by Species") +
   xlab("Species")+
-  ylab("fw2/fw1")
+  ylab("RGR (g/g-1 d-1)")
+
+#RGR by species, fill CO2
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=rgr, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Relative Growth Rate by Species") +
+  xlab("Species")+
+  ylab("RGR (g/g-1 d-1)")
+
+#ldmc co2, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=co2, y=ldmc, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Leaf Dry Matter Content by CO2 Level") +
+  xlab("CO2 (ppm)")+
+  ylab("LDMC (units)")
+
+#ldmc nutrient, fill co2
+bm8.3 %>%
+  ggplot(aes(x=nutrient, y=ldmc, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Leaf Dry Matter Content by Nutrient Treatment") +
+  xlab("Nutrient Treatment")+
+  ylab("LDMC (units)")
+
+#ldmc by species, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=ldmc, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Leaf Dry Matter Content by Species") +
+  xlab("Species")+
+  ylab("LDMC (units)")
+
+#ldmc by species, fill CO2
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=ldmc, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Leaf Dry Matter Content by Species") +
+  xlab("Species")+
+  ylab("LDMC (units)")
+
+#fw2/fw1 co2, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=co2, y=fw1_fw2, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Fresh Weight Ratio by CO2 Level") +
+  xlab("CO2 (ppm)")+
+  ylab("fw2/fw1 (units)")
+
+#fw2/fw1 nutrient, fill co2
+bm8.3 %>%
+  ggplot(aes(x=nutrient, y=ldmc, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Fresh Weight Ratio by Nutrient Treatment") +
+  xlab("Nutrient Treatment")+
+  ylab("fw2/fw1 (units)")
+
+#fw2/fw1 by species, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=ldmc, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Fresh Weight Ratio by Species") +
+  xlab("Species")+
+  ylab("fw2/fw1 (units)")
+
+#fw2/fw1 by species, fill CO2
+bm8.3 %>%
+  ggplot(aes(x=spp_id, y=ldmc, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Leaf Dry Matter Content by Species") +
+  xlab("Species")+
+  ylab("fw2/fw1 (units)")
+
+
+##############################################################################
+##response by nativity##
+rgraov4 <- aov(data = bm8.3, rgr~co2*nutrient*n_nn)
+rgraov6 <- aov(data = bm8.3, rgr~co2*nutrient*n_nn*spp_id)
+#
+ldmcaov2 <- aov(data = bm8.3, ldmc~co2*nutrient*n_nn)
+ldmcaov4 <- aov(data = bm8.3, ldmc~co2*nutrient*n_nn*spp_id)
+#
+#sla goes here
+
+lmer2 <- lmer(data = bm8.3, rgr~co2*n_nn-1 + (1|spp_id), subset = bm8.3$rgr>0)
+lmer3 <- lmer(data = bm8.3, rgr~nutrient*n_nn-1 + (1|spp_id), subset = bm8.3$rgr>0)
+lmer4 <- lmer(data = bm8.3, rgr~co2*nutrient*n_nn-1 + (1|spp_id), subset = bm8.3$rgr>0)
+#
+lmer6 <- lmer(data = bm8.3, ldmc~co2*n_nn-1 + (1|spp_id))
+lmer7 <- lmer(data = bm8.3, ldmc~nutrient*n_nn-1 + (1|spp_id))
+lmer8 <- lmer(data = bm8.3, ldmc~co2*nutrient*n_nn-1 + (1|spp_id))
+#
+#sla goes here
+
+boxplot(data = bm8.3, rgr~nutrient*co2*n_nn)
+boxplot(data = bm8.3, rgr~nutrient*co2*spp_id)
+boxplot(data = bm8.3, rgr~nutrient*co2*spp_id*n_nn)
+#
+boxplot(data = bm8.3, ldmc~nutrient*co2*n_nn)
+boxplot(data = bm8.3, ldmc~nutrient*co2*spp_id)
+boxplot(data = bm8.3, ldmc~nutrient*co2*spp_id*n_nn)
+#
+#sla goes here
+
+#RGR nativity, fill co2
+bm8.3 %>%
+  ggplot(aes(x=n_nn, y=rgr, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("CO2 Response by Nativity") +
+  xlab("Native/Non-Native")+
+  ylab("RGR (g/g-1 d-1)")
+
+#RGR nativity, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=n_nn, y=rgr, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Nutrient Response by Nativity") +
+  xlab("Native/Non-Native")+
+  ylab("RGR (g/g-1 d-1)")
+
+
+#ldmc nativity, fill co2
+bm8.3 %>%
+  ggplot(aes(x=n_nn, y=ldmc, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("CO2 Response by Nativity") +
+  xlab("Native/Non-Native")+
+  ylab("LDMC (units)")
+
+#ldmc nativity, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=n_nn, y=ldmc, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Nutrient Response by Nativity") +
+  xlab("Native/Non-Native")+
+  ylab("LDMC (units)")
+
+
+#fw2/fw1 nativity, fill co2
+bm8.3 %>%
+  ggplot(aes(x=n_nn, y=fw1_fw2, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("CO2 Response by Nativity") +
+  xlab("Native/Non-Native")+
+  ylab("fw2/fw1 (units)")
+
+#fw2/fw1 nativity, fill nutrient
+bm8.3 %>%
+  ggplot(aes(x=n_nn, y=fw1_fw2, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Nutrient Response by Nativity") +
+  xlab("Native/Non-Native")+
+  ylab("fw2/fw1 (units)")
 
 
 
-#prelim, look at rgr and rmf
-rgraov <- aov(data = bm8.3, rgr~co2*nutrient*n_nn*spp_id)
-rmfaov <- aov(data = bm8.3, rmf~co2*nutrient*n_nn*spp_id)
-summary.aov(rgraov)
-#n*spp, spp, n/nn, and n are sig
-summary.aov(rmfaov)
-#co2*n, spp, n/nn are sig, n and co2*spp are trending
 
-boxplot(data = bm8.3, rgr~nutrient*spp_id)
 
-rgraov1 <- aov(data = bm8.3, rgr~co2*nutrient*n_nn)
-rmfaov1 <- aov(data = bm8.3, rmf~co2*nutrient*n_nn)
 
-lmer1 <- lmer(data = bm8.3, rgr~co2*nutrient*n_nn + (1|spp_id))
 
-lmer2 <- lmer(data = bm8.3, rgr~co2*nutrient-1 + (1|spp_id))
-anova(lmer2)
 
-lmer1a <- lmer(data = bm8.3, rgr~co2*nutrient*n_nn + (1|spp_id), subset = bm8$rgr>0)
-lmer1b <- lmer(data = bm8.3, lmf~co2*nutrient*n_nn + (1|spp_id), subset = bm8$rgr>0)
-lmer1c <- lmer(data = bm8.3, rgr~co2*nutrient + (1|spp_id), subset = bm8.3$rgr>0)
+
+
+
+
+
+
+
 
 
