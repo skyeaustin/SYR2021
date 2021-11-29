@@ -12,16 +12,23 @@ library(lmerTest)
 
 #set wd#
 setwd("~/Documents/r_stuff/SYR2021-1/new_SYR") #skye's mac
+setwd("~/SYR/SYR_rcode/SYR2021/new_SYR") #skye's pc
 
-##includes height, leaf count, leaf area, sla, etc
-
-fix p. indica columns
-pinfix <- r3bm %>% 
-  subset(r3bm$spp_id == "Potentilla indica")
-pinfix1 <- pinfix %>% 
-  mutate(co2=substring(pot_id, 12, 14))
-pinfix2 <- pinfix1 %>% 
-  mutate(nutrient=substring(pot_id, 16))
+###Plant Data###
+#csvs
+p1 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r1_leaves.csv")
+  #get rid of treatment column
+  p1.1 <- p1 %>% 
+    
+p2 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r2_leaves.csv")
+p3 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r3_leaves.csv")
+  #fix PIN cols
+  pinfix <- p3 %>% 
+    subset(p3$spp_id == "Potentilla indica")
+  pinfix1 <- pinfix %>% 
+    mutate(co2=substring(pot_id, 12, 14))
+  pinfix2 <- pinfix1 %>% 
+    mutate(nutrient=substring(pot_id, 16))
 
 #make r3 w/o p.indica
 r3_nopin <- r3bm %>% 
@@ -53,3 +60,6 @@ r2bm_native <- r2bm_n %>%
   mutate(n_nn=if_else(r2bm_n$spp_id %in% c("Plantago rugelii"), "native", "non-native" ))
 r3bm_native <- r3 %>% 
   mutate(n_nn="non-native")
+
+
+###Leaf Area/SLA###

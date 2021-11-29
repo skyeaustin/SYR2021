@@ -9,10 +9,11 @@ library(nlme) #for mixed linear and generalized linear models
 library(lme4) #for mixed linear and generalized linear models
 library(devtools)
 library(lmerTest)
+library(vegan)
 
 #set wd#
 setwd("~/Documents/r_stuff/SYR2021-1/new_SYR") #skye's mac
-setwd("~/SYR/SYR_rcode/SYR2021") #skye's pc
+setwd("~/SYR/SYR_rcode/SYR2021/new_SYR") #skye's pc
 
 #read csv#
 #mac
@@ -21,9 +22,9 @@ r2bm <- read.csv("/Users/saus/Documents/SYR/datadata/biomass/r2_biomass.csv")
 r3bm <- read.csv("/Users/saus/Documents/SYR/datadata/biomass/r3_biomass.csv")
 
 #PC
-r1bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r1_biomass.csv")
-r2bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r2_biomass.csv")
-r3bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r3_biomass.csv")
+r1bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\biomass\\r1_biomass.csv")
+r2bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\biomass\\r2_biomass.csv")
+r3bm <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\biomass\\r3_biomass.csv")
 
 #fix p. indica columns
 pinfix <- r3bm %>% 
@@ -104,16 +105,16 @@ lmdc_ds <- 0.1312032
 lmdc_pr <- 0.2035800
 lmdc_pi <- 0.3405158
 
-##calulating RGR##
+##calculating RGR##
 #bring in extras sheets
 r1e <- read.csv("/Users/saus/Documents/SYR/datadata/biomass/r1_extras.csv")
 r2e <- read.csv("/Users/saus/Documents/SYR/datadata/biomass/r2_extras.csv")
 r3e <- read.csv("/Users/saus/Documents/SYR/datadata/biomass/r3_extras.csv")
 
 #PC
-r1e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\rnd1_fwdw_extras.csv")
-r2e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r2_extras.csv")
-r3e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\data\\r3_extras.csv")
+r1e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\biomass\\r1_extras.csv")
+r2e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\biomass\\r2_extras.csv")
+r3e <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\biomass\\r3_extras.csv")
 
 #edit sheet
 r2e1 <- select(r2e, -c("abv_f_g", "blw_f_g", "abv_d_g", "blw_d_g"))
@@ -597,5 +598,6 @@ bm9 %>%
 
 
 
-
+#permanova tests?
+#set seed for reproducability
 
