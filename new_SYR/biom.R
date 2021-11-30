@@ -599,5 +599,5 @@ bm9 %>%
 
 
 #permanova tests?
-#set seed for reproducability
+#set seed for reproducability?
 
