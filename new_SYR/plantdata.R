@@ -5,55 +5,93 @@ library(dplyr)
 library(ggpubr)
 library(RColorBrewer)
 library(rcompanion)
-library(nlme) #for mixed linear and generalized linear models
-library(lme4) #for mixed linear and generalized linear models
+library(nlme)
+library(lme4)
 library(devtools)
 library(lmerTest)
+library(vegan)
 
 #set wd#
 setwd("~/Documents/r_stuff/SYR2021-1/new_SYR") #skye's mac
 setwd("~/SYR/SYR_rcode/SYR2021/new_SYR") #skye's pc
 
 ###Plant Data###
-#csvs
+#skye's mac#
+p1 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r1_leaves.csv")
+#make columns numeric
+p1$height_cm <- as.numeric(as.character(p1$height_cm))
+p1$leaves_emerged <- as.numeric(as.character(p1$leaves_emerged))
+p1$leaves_emerging <- as.numeric(as.character(p1$leaves_emerging))
+p1$leaves_dead <- as.numeric(as.character(p1$leaves_dead))
+#get rid of treatment column
+p1.1 = subset(p1, select = -eval(parse(text=treatment)))
+p2 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r2_leaves.csv")
+#make columns numeric
+p2$height_cm <- as.numeric(as.character(p2$height_cm))
+p2$leaves_emerged <- as.numeric(as.character(p2$leaves_emerged))
+p2$leaves_emerging <- as.numeric(as.character(p2$leaves_emerging))
+p2$leaves_dead <- as.numeric(as.character(p2$leaves_dead))
+p3 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r3_leaves.csv")
+#make columns numeric
+p3$height_cm <- as.numeric(as.character(p3$height_cm))
+p3$leaves_emerged <- as.numeric(as.character(p3$leaves_emerged))
+p3$leaves_emerging <- as.numeric(as.character(p3$leaves_emerging))
+p3$leaves_dead <- as.numeric(as.character(p3$leaves_dead))
+#fix PIN cols
+pinfix <- p3 %>% 
+  subset(p3$spp_id == "Potentilla indica")
+pinfix1 <- pinfix %>% 
+  mutate(co2=substring(pot_id, 12, 14))
+pinfix2 <- pinfix1 %>% 
+  mutate(nutrient=substring(pot_id, 16))
+
+#skye's PC#
 p1 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r1_leaves.csv")
-  #get rid of treatment column
-  p1.1 <- p1 %>% 
-    
+#get rid of treatment column
+p1.1 <- p1 %>% 
+  select(p1, -starts_with("t"))
 p2 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r2_leaves.csv")
 p3 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r3_leaves.csv")
-  #fix PIN cols
-  pinfix <- p3 %>% 
-    subset(p3$spp_id == "Potentilla indica")
-  pinfix1 <- pinfix %>% 
-    mutate(co2=substring(pot_id, 12, 14))
-  pinfix2 <- pinfix1 %>% 
-    mutate(nutrient=substring(pot_id, 16))
+#fix PIN cols
+pinfix <- p3 %>% 
+  subset(p3$spp_id == "Potentilla indica")
+pinfix1 <- pinfix %>% 
+  mutate(co2=substring(pot_id, 12, 14))
+pinfix2 <- pinfix1 %>% 
+  mutate(nutrient=substring(pot_id, 16))
 
-#make r3 w/o p.indica
-r3_nopin <- r3bm %>% 
-  subset(r3bm$spp_id != "Potentilla indica")
+#add cols and combine#
 
-#make CO2 column
-r1bm_co2 <- r1bm %>% 
+#take out pin from 3
+p3_nopin <- p3 %>% 
+  subset(p3$spp_id != "Potentilla indica")
+
+#add co2 and nutrient to 1, 2, and 3 no pin
+p1_co2 <- p1.1 %>% 
   mutate(co2=substring(pot_id, 11, 13))
-r2bm_co2 <- r2bm %>% 
+p2_co2 <- p2 %>% 
   mutate(co2=substring(pot_id, 11, 13))
-r3bm_co2 <- r3_nopin %>% 
+p3nopin_co2 <- p3_nopin %>% 
   mutate(co2=substring(pot_id, 11, 13))
 
-#nutrient column 
-r1bm_n <- r1bm_co2 %>% 
+#nutrient column to 1, 2, and 3 no pin
+p1_n <- p1_co2 %>% 
   mutate(nutrient=substring(pot_id, 15))
-r2bm_n <- r2bm_co2 %>% 
+p2_n <- p2_co2 %>% 
   mutate(nutrient=substring(pot_id, 15))
-r3bm_n <- r3bm_co2 %>% 
+p3nopin_n <- p3nopin_co2 %>% 
   mutate(nutrient=substring(pot_id, 15))
 
-#add p.indica back in to r3
-r3 <- bind_rows(r3bm_n, pinfix2)
+#add pin back to 3
+p3_n <- bind_rows(pinfix2, p3nopin_n)
 
-#n/nn column
+#remove empty rows
+p3_n <- na.omit(p3_n)
+
+#combine all 3 plant data sets
+plantdat1 <- bind_rows(p3_n, p2_n, p1_n)
+
+#add n/nn col         ##NOT DONE##
 r1bm_native <- r1bm_n %>% 
   mutate(n_nn=if_else(r1bm_n$spp_id %in% c("Chenopodium album"), "non-native", "native" ))
 r2bm_native <- r2bm_n %>% 
@@ -61,5 +99,5 @@ r2bm_native <- r2bm_n %>%
 r3bm_native <- r3 %>% 
   mutate(n_nn="non-native")
 
+#remove dead plants
 
-###Leaf Area/SLA###
