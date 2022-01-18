@@ -18,6 +18,44 @@ setwd("~/SYR/SYR_rcode/SYR2021/new_SYR") #skye's pc
 ###Plant Data###
 #skye's mac#
 p1 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r1_leaves.csv")
+#skye's PC#
+p1 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r1_leaves.csv")
+#make columns numeric
+p1$height_cm <- as.numeric(as.character(p1$height_cm))
+p1$leaves_emerged <- as.numeric(as.character(p1$leaves_emerged))
+p1$leaves_emerging <- as.numeric(as.character(p1$leaves_emerging))
+p1$leaves_dead <- as.numeric(as.character(p1$leaves_dead))
+#get rid of treatment column
+p1.1 = subset(p1, select = -eval(parse(text=treatment)))
+
+#mac
+p2 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r2_leaves.csv")
+#pc
+p2 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r2_leaves.csv")
+#make columns numeric
+p2$height_cm <- as.numeric(as.character(p2$height_cm))
+p2$leaves_emerged <- as.numeric(as.character(p2$leaves_emerged))
+p2$leaves_emerging <- as.numeric(as.character(p2$leaves_emerging))
+p2$leaves_dead <- as.numeric(as.character(p2$leaves_dead))
+
+#mac
+p3 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r3_leaves.csv")
+#pc
+p3 <- "C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r3_leaves.csv"
+#make columns numeric
+p3$height_cm <- as.numeric(as.character(p3$height_cm))
+p3$leaves_emerged <- as.numeric(as.character(p3$leaves_emerged))
+p3$leaves_emerging <- as.numeric(as.character(p3$leaves_emerging))
+p3$leaves_dead <- as.numeric(as.character(p3$leaves_dead))
+#fix PIN cols
+pinfix <- p3 %>% 
+  subset(p3$spp_id == "Potentilla indica")
+pinfix1 <- pinfix %>% 
+  mutate(co2=substring(pot_id, 12, 14))
+pinfix2 <- pinfix1 %>% 
+  mutate(nutrient=substring(pot_id, 16))
+
+
 #make columns numeric
 p1$height_cm <- as.numeric(as.character(p1$height_cm))
 p1$leaves_emerged <- as.numeric(as.character(p1$leaves_emerged))
@@ -37,21 +75,6 @@ p3$height_cm <- as.numeric(as.character(p3$height_cm))
 p3$leaves_emerged <- as.numeric(as.character(p3$leaves_emerged))
 p3$leaves_emerging <- as.numeric(as.character(p3$leaves_emerging))
 p3$leaves_dead <- as.numeric(as.character(p3$leaves_dead))
-#fix PIN cols
-pinfix <- p3 %>% 
-  subset(p3$spp_id == "Potentilla indica")
-pinfix1 <- pinfix %>% 
-  mutate(co2=substring(pot_id, 12, 14))
-pinfix2 <- pinfix1 %>% 
-  mutate(nutrient=substring(pot_id, 16))
-
-#skye's PC#
-p1 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r1_leaves.csv")
-#get rid of treatment column
-p1.1 <- p1 %>% 
-  select(p1, -starts_with("t"))
-p2 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r2_leaves.csv")
-p3 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r3_leaves.csv")
 #fix PIN cols
 pinfix <- p3 %>% 
   subset(p3$spp_id == "Potentilla indica")
@@ -100,4 +123,25 @@ r3bm_native <- r3 %>%
   mutate(n_nn="non-native")
 
 #remove dead plants
+
+
+##add in leaf area stuff##
+#skye's pc
+la2 <- "C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\leafarea\\total_leafarea_r2.csv"
+la3 <- "C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\leafarea\\total_leafarea_r3.csv"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

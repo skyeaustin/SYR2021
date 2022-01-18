@@ -12,3 +12,48 @@ library(lmerTest)
 
 #set wd#
 setwd("~/Documents/r_stuff/SYR2021-1/new_SYR") #skye's mac
+setwd("~/SYR/SYR_rcode/SYR2021/new_SYR") #skye's pc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
