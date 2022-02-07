@@ -25,12 +25,14 @@ p1 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r1_leaves.csv")
   p1$leaves_dead <- as.numeric(as.character(p1$leaves_dead))
   #get rid of treatment column
   p1.1 = subset(p1, select = -eval(parse(text=treatment)))
+  
 p2 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r2_leaves.csv")
 #make columns numeric
 p2$height_cm <- as.numeric(as.character(p2$height_cm))
 p2$leaves_emerged <- as.numeric(as.character(p2$leaves_emerged))
 p2$leaves_emerging <- as.numeric(as.character(p2$leaves_emerging))
 p2$leaves_dead <- as.numeric(as.character(p2$leaves_dead))
+
 p3 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r3_leaves.csv")
 #make columns numeric
 p3$height_cm <- as.numeric(as.character(p3$height_cm))
@@ -90,6 +92,8 @@ p3_n <- na.omit(p3_n)
 
 #combine all 3 plant data sets
 plantdat1 <- bind_rows(p3_n, p2_n, p1_n)
+
+
 
 #add n/nn col         ##NOT DONE##
 r1bm_native <- r1bm_n %>% 

@@ -595,9 +595,23 @@ bm9 %>%
 
 
 
+bm10 <- bm9 %>% 
+  subset(bm9$rgr>0)
 
 
 
 #permanova tests?
 #set seed for reproducability?
+
+#permanova tests?
+#set seed for reproducability
+##### THE ISSUE IS HAVING NEGATIVE VALUES. GET RID OF NEGATIVES ########
+rgr_permanova <- adonis(data = bm10, rgr~co2 + nutrient, method = "bray")
+#+ (1|spp_id), subset = bm9$rgr>0) #can i log transform this? or do i have to take out the subset?
+#
+ldmc_permanova <- adonis(data = bm9, ldmc~co2 + nutrient, method = "bray")
+#
+lmf_permanova <- adonis(data = bm9, lmf~co2*nutrient-1 + (1|spp_id))
+#
+rmf_permanova <- adonis(data = bm9, rmf~co2*nutrient-1 + (1|spp_id))
 
