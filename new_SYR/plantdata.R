@@ -47,6 +47,59 @@ pinfix1 <- pinfix %>%
 pinfix2 <- pinfix1 %>% 
   mutate(nutrient=substring(pot_id, 16))
 
+#subset to last date#
+#round1
+p1_last <- p1.1 %>% 
+  subset(p1.1$date == "7/3/21")
+
+#round2
+p2_last <- p2 %>% 
+  subset(p2$date == "7/3/21")
+
+#round3
+p3_last <- pinfix2 <- p1.1 %>% 
+  subset(p3$date == "7/3/21")
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #skye's PC#
 p1 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r1_leaves.csv")
 #get rid of treatment column

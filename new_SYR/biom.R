@@ -259,7 +259,9 @@ rmfaov2 <- aov(data = bm9, rmf~co2*nutrient*spp_id)#nutrient*, spp_id***, co2:nu
 
 ####
 
-rgr_lmer <- lmer(data = bm9, rgr~co2*nutrient-1 + (1|spp_id), subset = bm9$rgr>0) #can i log transform this? or do i have to take out the subset?
+rgr_lmer <- lmer(data = bm9, rgr~co2*nutrient*n_nn-1 + (1|spp_id), subset = bm9$rgr>0)
+#can i log transform this? or do i have to take out the subset?
+VarCorr(rgr_lmer)
 #
 ldmc_lmer <- lmer(data = bm9, ldmc~co2*nutrient-1 + (1|spp_id))
 #
@@ -456,21 +458,39 @@ lmfaov3 <- aov(data = bm9, lmf~co2*nutrient*n_nn) #nutrient., co2:nutrient.
 lmfaov4 <- aov(data = bm9, lmf~co2*nutrient*n_nn*spp_id) #nutrient***, spp_id***, co2:nutrient*, co2:nutrient:spp_id***
 
 
-rgrlmer1 <- lmer(data = bm9, rgr~co2*n_nn-1 + (1|spp_id), subset = bm9$rgr>0) #log trans?
-rgrlmer2 <- lmer(data = bm9, rgr~nutrient*n_nn-1 + (1|spp_id), subset = bm9$rgr>0) #log trans?
-rgrlmer3 <- lmer(data = bm9, rgr~co2*nutrient*n_nn-1 + (1|spp_id), subset = bm9$rgr>0) #log trans?
+rgrlmer1 <- lmer(data = bm9, rgr~co2*n_nn-1 + (1|spp_id))#, subset = bm9$log_rgr>0) 
+summary(rgrlmer1)#nothing
+
+rgrlmer2 <- lmer(data = bm9, rgr~nutrient*n_nn-1 + (1|spp_id), subset = bm9$log_rgr>0) 
+summary(rgrlmer2)# nutrientN . 
+
+rgrlmer3 <- lmer(data = bm9, rgr~co2*nutrient*n_nn-1 + (1|spp_id), subset = bm9$rgr>0) 
+anova(rgrlmer3, type = "I")# co2400 *
 #
 ldmclmer1 <- lmer(data = bm9, ldmc~co2*n_nn-1 + (1|spp_id))
+summary(ldmclmer1)# co2200 **, co2400**
+
 ldmclmer2 <- lmer(data = bm9, ldmc~nutrient*n_nn-1 + (1|spp_id))
+summary(ldmclmer2)# nutrientN *, nutrientX **
+
 ldmclmer3 <- lmer(data = bm9, ldmc~co2*nutrient*n_nn-1 + (1|spp_id))
+summary(ldmclmer3)# co2200**, co2400 *
+
 #
 rmflmer1 <- lmer(data = bm9, rmf~co2*n_nn-1 + (1|spp_id))
+summary(rmflmer1)# co2200 ***, co2400, ***
+
 rmflmer2 <- lmer(data = bm9, rmf~nutrient*n_nn-1 + (1|spp_id))
+summary(rmflmer2)# nutrientN ***, nutrientX ***
+
 rmflmer3 <- lmer(data = bm9, rmf~co2*nutrient*n_nn-1 + (1|spp_id))
+anova(rmflmer3, type = "I")
 #
 lmflmer1 <- lmer(data = bm9, lmf~co2*n_nn-1 + (1|spp_id))
+
 lmflmer2 <- lmer(data = bm9, lmf~nutrient*n_nn-1 + (1|spp_id))
 lmflmer3 <- lmer(data = bm9, lmf~co2*nutrient*n_nn-1 + (1|spp_id))
+anova(lmflmer3, type = "I") #co2*, nutrient*, co2:nutrient*
 
 ##not sure if these boxplots are helpful##
 boxplot(data = bm9, log_rgr~nutrient*co2*n_nn)
@@ -613,5 +633,30 @@ ldmc_permanova <- adonis(data = bm9, ldmc~co2 + nutrient, method = "bray")
 #
 lmf_permanova <- adonis(data = bm9, lmf~co2*nutrient-1 + (1|spp_id))
 #
-rmf_permanova <- adonis(data = bm9, rmf~co2*nutrient-1 + (1|spp_id))
+rmf_permanova <- adonis(data = bm9, rmf~co2 + nutrient, method = "bray")
+
+
+
+
+
+bm9 %>%
+  ggplot(aes(x=spp_id, y=rgr, fill=co2)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("CO2 Response by Nativity") +
+  xlab("Native/Non-Native")+
+  ylab("RGR (g/g-1 d-1)")
+
+
+#lmer(data = licor_nnn, gsw~co2*nutrient*nativity-1 + (1|spp_id))
+#Note you had the (built-in) regression tables as output for these, 
+#but a better option is the anova table from the package 'lmerTest', 
+#using its 'anova' function (see p. 5 here). 
+
+#linear regression, plot model, should be straight line
+model = lm()
 
