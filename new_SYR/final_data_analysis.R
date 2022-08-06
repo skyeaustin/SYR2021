@@ -1,6 +1,20 @@
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(ggpubr)
+library(RColorBrewer)
+library(rcompanion)
+library(nlme) #for mixed linear and generalized linear models
+library(lme4) #for mixed linear and generalized linear models
+library(devtools)
+library(lmerTest)
+library(vegan)
+library(multcompView)
 
-###Linear Mixed-Effects Models ---------------------------
-##analysed with a Type III Anova (anova()function)##
+
+###STATS ---------------------------
+##Linear Mixed-Effects Models
+#analysed with a Type III Anova (anova()function)##
 rgr_lmer <- lmer(data = bm9, rgr~co2*nutrient*n_nn-1 + (1|spp_id), subset = bm9$rgr>0)
 VarCorr(rgr_lmer)
      ##co2 *, nutrient ***
@@ -24,6 +38,51 @@ gsw_lmer <- lmer(data = licor6, gsw~co2*nutrient*n_nn-1 + (1|spp_id))
 VarCorr(gsw_lmer) #check notes for what this means?
      ##co2 and co2:nutrient trending with significance indicator (.)
 
+###PLOTS -----------------------------------
+#RGR 
+bm9 %>%
+  ggplot(aes(x=co2, y=rgr, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  facet_wrap(~ n_nn) +
+  scale_fill_manual(values = c("#5E34AD", "#89D585"))+  
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Relative Growth Rate by CO2 Level") +
+  xlab("CO2 Level (ppm)")+
+  ylab("RRelative Growth Rate (g/g-1 d-1)")
+
+#A 
+licor6 %>%
+  ggplot(aes(x=co2, y=A, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  facet_wrap(~ n_nn) +
+  scale_fill_manual(values = c("#5E34AD", "#89D585"))+  
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Photosynthetic Rate by CO2 Level") +
+  xlab("Native/Non-Native")+
+  ylab("Photosynthetic Rate (μmol m−2 sec−1)")
+
+
+#gsw
+licor6 %>%
+  ggplot(aes(x=co2, y=gsw, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  facet_wrap(~ n_nn) +
+  scale_fill_manual(values = c("#5E34AD", "#89D585"))+  
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Stomatal Conductance by CO2 Level") +
+  xlab("CO2 Level (ppm)")+
+  ylab("Stomatal Conductance (mmol m−2 s−1)")
+
+
+
+
+
 
 ###Plots created using ggplot### ------------------------------
 
@@ -32,7 +91,6 @@ bm9 %>%
 ggplot(aes(x=n_nn, y=rgr, fill=co2)) +
 geom_boxplot(outlier.shape = NA) +
 scale_fill_manual(values = c("#653371", "#76C19A"))+  
-geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
 theme(
   plot.title = element_text(size=11)
   ) +
@@ -43,7 +101,7 @@ ylab("RGR (g/g-1 d-1)")
 
 #RGR by nativity, fill nutrient
 bm9 %>%
-  ggplot(aes(x=n_nn, y=rgr, fill=nutrient)) +
+  ggplot(aes(x=n_nn, y=rgr, fill=nutrient, co2)) +
   geom_boxplot(outlier.shape = NA) +
   scale_fill_manual(values = c("#653371", "#76C19A"))+  
   geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
@@ -107,3 +165,6 @@ licor_nnn %>%
   ggtitle("Stomatal Conductance (gsw) by CO2 Level") +
   xlab("CO2 (ppm)")+
   ylab("gsw (units)")
+
+
+
