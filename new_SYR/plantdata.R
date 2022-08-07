@@ -27,6 +27,9 @@ p1$leaves_emerging <- as.numeric(as.character(p1$leaves_emerging))
 p1$leaves_dead <- as.numeric(as.character(p1$leaves_dead))
 #get rid of treatment column
 p1.1 = subset(p1, select = -eval(parse(text=treatment)))
+#subset to last date
+p1_last <- p1.1 %>% 
+  subset(p1.1$date == "7/3/21")
 
 #mac
 p2 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r2_leaves.csv")
@@ -37,11 +40,13 @@ p2$height_cm <- as.numeric(as.character(p2$height_cm))
 p2$leaves_emerged <- as.numeric(as.character(p2$leaves_emerged))
 p2$leaves_emerging <- as.numeric(as.character(p2$leaves_emerging))
 p2$leaves_dead <- as.numeric(as.character(p2$leaves_dead))
+#subset to last date
+
 
 #mac
 p3 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r3_leaves.csv")
 #pc
-p3 <- "C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r3_leaves.csv"
+p3 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\plantdata\\r3_leaves.csv")
 #make columns numeric
 p3$height_cm <- as.numeric(as.character(p3$height_cm))
 p3$leaves_emerged <- as.numeric(as.character(p3$leaves_emerged))
@@ -54,37 +59,10 @@ pinfix1 <- pinfix %>%
   mutate(co2=substring(pot_id, 12, 14))
 pinfix2 <- pinfix1 %>% 
   mutate(nutrient=substring(pot_id, 16))
+#subset to last date
 
-
-#make columns numeric
-p1$height_cm <- as.numeric(as.character(p1$height_cm))
-p1$leaves_emerged <- as.numeric(as.character(p1$leaves_emerged))
-p1$leaves_emerging <- as.numeric(as.character(p1$leaves_emerging))
-p1$leaves_dead <- as.numeric(as.character(p1$leaves_dead))
-#get rid of treatment column
-p1.1 = subset(p1, select = -eval(parse(text=treatment)))
-p2 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r2_leaves.csv")
-#make columns numeric
-p2$height_cm <- as.numeric(as.character(p2$height_cm))
-p2$leaves_emerged <- as.numeric(as.character(p2$leaves_emerged))
-p2$leaves_emerging <- as.numeric(as.character(p2$leaves_emerging))
-p2$leaves_dead <- as.numeric(as.character(p2$leaves_dead))
-p3 <- read.csv("/Users/saus/Documents/SYR/datadata/plantdata/r3_leaves.csv")
-#make columns numeric
-p3$height_cm <- as.numeric(as.character(p3$height_cm))
-p3$leaves_emerged <- as.numeric(as.character(p3$leaves_emerged))
-p3$leaves_emerging <- as.numeric(as.character(p3$leaves_emerging))
-p3$leaves_dead <- as.numeric(as.character(p3$leaves_dead))
-#fix PIN cols
-pinfix <- p3 %>% 
-  subset(p3$spp_id == "Potentilla indica")
-pinfix1 <- pinfix %>% 
-  mutate(co2=substring(pot_id, 12, 14))
-pinfix2 <- pinfix1 %>% 
-  mutate(nutrient=substring(pot_id, 16))
 
 #add cols and combine#
-
 #take out pin from 3
 p3_nopin <- p3 %>% 
   subset(p3$spp_id != "Potentilla indica")
@@ -127,8 +105,8 @@ r3bm_native <- r3 %>%
 
 ##add in leaf area stuff##
 #skye's pc
-la2 <- "C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\leafarea\\total_leafarea_r2.csv"
-la3 <- "C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\leafarea\\total_leafarea_r3.csv"
+la2 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\leafarea\\total_leafarea_r2.csv")
+la3 <- read.csv("C:\\Users\\Airsi\\OneDrive\\Documents\\SYR\\datadata\\leafarea\\total_leafarea_r3.csv")
 
 
 
