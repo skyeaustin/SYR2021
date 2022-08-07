@@ -79,8 +79,19 @@ licor6 %>%
   xlab("CO2 Level (ppm)")+
   ylab("Stomatal Conductance (mmol m−2 s−1)")
 
-
-
+#rmf
+bm9 %>%
+  ggplot(aes(x=co2, y=rmf, fill=nutrient)) +
+  geom_boxplot(outlier.shape = NA) +
+  facet_wrap(~ n_nn) +
+  scale_fill_manual(values = c("#653371", "#76C19A"))+  
+  geom_jitter(color="black", size=0.4, alpha=0.9, position = position_jitter(seed = 1)) +
+  theme(
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Root Mass Fraction by CO2 Level") +
+  xlab("CO2 Level (ppm)")+
+  ylab("Root Mass Fraction (g g-1)")
 
 
 
